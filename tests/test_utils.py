@@ -39,4 +39,4 @@ def test_integration_save_and_load_model_same_predictions(tmp_path: Path) -> Non
     save_model(model, filepath)
     reloaded = load_model(filepath)
     assert list(reloaded.predict(X)) == list(model.predict(X))
-    assert (reloaded.predict_proba(X) == model.predict_proba(X)).all()    
+    assert (reloaded.predict_proba(X) == model.predict_proba(X)).all()
