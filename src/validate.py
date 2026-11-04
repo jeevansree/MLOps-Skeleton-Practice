@@ -37,7 +37,7 @@ def _check_stations(df: pd.DataFrame, max_missing_station_share: float) -> None:
     missing_share = (df["start_station_id"].isna() | df["end_station_id"].isna()).mean()
     if missing_share >= max_missing_station_share:
         limit = f"{max_missing_station_share:.0%}"
-        raise ValueError(f"{missing_share:.1%} of trips are missing a station ID (limit {limit}). Check the raw export.")
+        raise ValueError(f"{missing_share:.1%} of trips are missing a station ID (limit {limit}). Check the raw data.")
     pairs = pd.concat([
         df[["start_station_id", "start_station_name"]].set_axis(["station_id", "name"], axis=1),
         df[["end_station_id", "end_station_name"]].set_axis(["station_id", "name"], axis=1),
