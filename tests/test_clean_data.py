@@ -1,6 +1,5 @@
 """Tests for src/clean_data.py: fixed row rules in training mode, every row kept in inference mode, trip features."""
 import pandas as pd
-import pytest
 
 from src.clean_data import clean_dataframe
 
@@ -51,7 +50,6 @@ def test_unit_clean_inference_keeps_every_row_and_input_unchanged() -> None:
     pd.testing.assert_frame_equal(df_raw, original)
 
 
-@pytest.mark.skip(reason="Awaiting validate in dev")
 def test_integration_clean_training_output_passes_validate() -> None:
     """Training-mode output of clean_dataframe passes validate_dataframe with the target column."""
     from src.validate import validate_dataframe
