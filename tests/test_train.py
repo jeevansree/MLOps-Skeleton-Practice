@@ -49,7 +49,7 @@ def test_unit_train_bad_inputs_raise_before_fitting() -> None:
 
 
 def test_integration_train_with_features_recipe_survives_save_and_reload(tmp_path) -> None:
-    """features recipe -> train_model -> save_model -> load_model gives the same probabilities (custom class reloads)."""
+    """features recipe -> train_model -> save -> reload gives the same probabilities (custom class reloads)."""
     from src import utils
     from src.features import get_feature_preprocessor
 
