@@ -51,3 +51,16 @@ def test_integration_evaluate_scores_train_model_output() -> None:
     metrics = evaluate_model(model, X.iloc[8:], y.iloc[8:], problem_type="classification")
     assert set(metrics) == {"roc_auc", "accuracy"}
     assert 0.0 <= metrics["roc_auc"] <= 1.0
+
+
+def test_unit_evaluate_regression_returns_rmse_and_mae() -> None:
+    """problem_type="regression" returns plain-float rmse and mae; a perfect fit gives 0.0 for both."""
+    from sklearn.linear_model import LinearRegression
+
+    X = pd.DataFrame({"duration_min": [1.0, 2.0, 3.0, 4.0]})
+    y = pd.Series([2.0, 4.0, 6.0, 8.0])
+    model = Pipeline([("model", LinearRegression())]).fit(X, y)
+    metrics = evaluate_model(model, X, y, problem_type="regression")
+    assert set(metrics) == {"rmse", "mae"}
+    assert all(type(value) is float for value in metrics.values())
+    assert metrics["rmse"] == pytest.approx(0.0) and metrics["mae"] == pytest.approx(0.0)

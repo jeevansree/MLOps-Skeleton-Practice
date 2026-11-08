@@ -40,3 +40,9 @@ def test_integration_save_and_load_model_same_predictions(tmp_path: Path) -> Non
     reloaded = load_model(filepath)
     assert list(reloaded.predict(X)) == list(model.predict(X))
     assert (reloaded.predict_proba(X) == model.predict_proba(X)).all()
+
+
+def test_unit_load_model_missing_file_raises(tmp_path: Path) -> None:
+    """load_model on a path that does not exist fails fast with a FileNotFoundError naming the problem."""
+    with pytest.raises(FileNotFoundError, match="Model file not found"):
+        load_model(tmp_path / "missing.joblib")
