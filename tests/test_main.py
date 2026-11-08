@@ -73,8 +73,8 @@ def test_integration_main_writes_three_artifacts_when_gate_met(tmp_path: Path,
     assert predictions["ride_id"].str.startswith("in").all()
 
 
-def test_integration_main_stops_without_predictions_when_gate_not_met(tmp_path: Path,
-                                                                     monkeypatch: pytest.MonkeyPatch) -> None:
+def test_integration_main_stops_without_predictions_when_gate_not_met(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """Decision 1A: an unreachable gate keeps clean.csv and the model, writes no predictions, and exits with 1."""
     _make_project(tmp_path, monkeypatch, threshold=1.01)
     with pytest.raises(SystemExit) as stopped:
