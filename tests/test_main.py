@@ -82,3 +82,25 @@ def test_integration_main_stops_without_predictions_when_gate_not_met(
     assert stopped.value.code == 1
     assert (tmp_path / "models" / "model.joblib").is_file()
     assert not (tmp_path / "reports" / "predictions.csv").exists()
+
+
+def test_unit_gate_met_directions_and_bad_settings() -> None:
+    """The gate compares in the agreed direction; a missing metric key or unknown comparison fails fast."""
+    gate = {"metric_key": "rmse", "comparison": "<=", "threshold": 2.0}
+    assert main_module._gate_met({"rmse": 1.5}, gate) is True
+    assert main_module._gate_met({"rmse": 2.5}, gate) is False
+    with pytest.raises(KeyError, match="roc_auc"):
+        main_module._gate_met({"rmse": 1.5}, {**gate, "metric_key": "roc_auc"})
+    with pytest.raises(ValueError, match="Unknown gate comparison"):
+        main_module._gate_met({"rmse": 1.5}, {**gate, "comparison": ">"})
+
+
+def test_integration_main_missing_feature_column_raises(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A feature column named in SETTINGS but absent after cleaning stops main() before any training."""
+    _make_project(tmp_path, monkeypatch, threshold=0.0)
+    numeric = main_module.SETTINGS["features"]["numeric_columns"] + ["not_a_column"]
+    monkeypatch.setitem(main_module.SETTINGS["features"], "numeric_columns", numeric)
+    with pytest.raises(KeyError, match="not_a_column"):
+        main_module.main()
+    assert not (tmp_path / "models" / "model.joblib").exists()

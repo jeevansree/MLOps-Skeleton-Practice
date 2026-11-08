@@ -1,5 +1,6 @@
 """Tests for src/clean_data.py: fixed row rules in training mode, every row kept in inference mode, trip features."""
 import pandas as pd
+import pytest
 
 from src.clean_data import clean_dataframe
 
@@ -58,3 +59,11 @@ def test_integration_clean_training_output_passes_validate() -> None:
     required = ["ride_id", "rideable_type", "start_station_id", "end_station_id", "hour",
                 "day_of_week", "is_weekend", "duration_min", "is_round_trip", "member_casual"]
     assert validate_dataframe(out, required_columns=required, target_column="member_casual") is True
+
+
+def test_unit_clean_invalid_timestamp_raises() -> None:
+    """A started_at value that is not a timestamp stops cleaning with a ValueError naming the column."""
+    df_raw = _make_df()
+    df_raw.loc[0, "started_at"] = "not a time"
+    with pytest.raises(ValueError, match="started_at"):
+        clean_dataframe(df_raw, target_column="member_casual")
